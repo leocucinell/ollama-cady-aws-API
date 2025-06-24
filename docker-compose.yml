@@ -1,0 +1,44 @@
+services:
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+
+  caddy:
+    image: caddy:2-alpine                # plain Caddy
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      - ACME_AGREE=true
+
+  # — ROUTE 53 DDNS (updated) ————————
+  route53-ddns:
+    image: crazymax/ddns-route53:latest
+    container_name: route53-ddns
+    restart: unless-stopped
+    environment:
+      - TZ=America/Los_Angeles        # or your zone
+      - SCHEDULE=*/5 * * * *          # every 5 min
+      - DDNSR53_CREDENTIALS_ACCESSKEYID=${AWS_ACCESS_KEY_ID}
+      - DDNSR53_CREDENTIALS_SECRETACCESSKEY=${AWS_SECRET_ACCESS_KEY}
+      - DDNSR53_ROUTE53_HOSTEDZONEID=${AWS_ZONE_ID}
+      - DDNSR53_ROUTE53_RECORDSSET_0_NAME=${DOMAIN}.
+      - DDNSR53_ROUTE53_RECORDSSET_0_TYPE=A
+      - DDNSR53_ROUTE53_RECORDSSET_0_TTL=300
+
+volumes:
+  ollama-data:
+  caddy-data:
+  caddy-config:

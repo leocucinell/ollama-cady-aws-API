@@ -1,0 +1,8 @@
+{
+	# e-mail for ACME
+	email  leocucinell@gmail.com
+}
+
+ai.leocucinell.com {
+	reverse_proxy ollama:11434
+}
