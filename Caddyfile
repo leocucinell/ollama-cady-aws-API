@@ -5,8 +5,9 @@
 
 ai.leocucinell.com {
     @api_key {
-        header X-API-Key {env.API_KEY}
+        header Authorization "Bearer {env.API_KEY}"
     }
+
 
 	handle @api_key {
 		reverse_proxy ollama:11434
