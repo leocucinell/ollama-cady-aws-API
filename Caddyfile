@@ -4,5 +4,14 @@
 }
 
 ai.leocucinell.com {
-	reverse_proxy ollama:11434
+    @api_key {
+        header X-API-Key {env.API_KEY}
+    }
+
+	handle @api_key {
+		reverse_proxy ollama:11434
+	}
+	handle {
+		respond "Unauthorized" 401
+	}
 }

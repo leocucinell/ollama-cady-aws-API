@@ -22,6 +22,7 @@ services:
       - caddy-config:/config
     environment:
       - ACME_AGREE=true
+      - API_KEY=${API_KEY}
 
   # — ROUTE 53 DDNS (updated) ————————
   route53-ddns:
